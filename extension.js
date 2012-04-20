@@ -78,12 +78,16 @@ CalcProvider.prototype = {
 
     getInitialResultSet: function(terms) { 
         let expr = terms.join('');
-        if (/^[0-9.+*/()-]+$/.test(expr)) {
+        if (/^[0-9,><.*+/^&|%()-~eE]|sin|cos|abs|acos|asin|atan|atan2|ceil|exp|floor|log|max|min|pow|random|round|sqrt|tan|E|LN2|LN10|LOG2E|LOG10E|PI|SQRT1_2|SQRT2+$/.test(expr)) {
             try {
-                return [{'expr': expr, 'result': eval(expr).toString()}];
+                let output = eval("with(Math)" + expr);
+                if (typeof output != 'number') {
+                    return [];
+                }
+                return [{'expr': expr, 'result': output.toString()}];
             }
             catch(exp) {
-                return []
+                return [];
             } 
         }
         else {
